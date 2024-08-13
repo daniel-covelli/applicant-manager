@@ -3,8 +3,6 @@ import { env } from "@/env";
 const BASE_URL = 'https://harvest.greenhouse.io/v1';
 const AUTH_TOKEN = env.GREEN_HOUSE_API_KEY
 
-console.log("AUTH_TOKEN", btoa(AUTH_TOKEN))
-
 const headers = {
   'Authorization': `Basic ${btoa(AUTH_TOKEN + ":")}`,
   'Content-Type': 'application/json',
