@@ -5,6 +5,8 @@ import ApplyButton from "./apply-button";
 import { type CandidateSchema } from "@/lib/definitions";
 import { type z } from "zod";
 import LineBreak from "@/components/linebreak";
+import Badge from "@/components/badge";
+import { Suspense } from "react";
 
 const generateSetUserHasAlreadyAppliedTo = (
   candidate: z.infer<typeof CandidateSchema> | undefined,
@@ -28,7 +30,6 @@ export default async function HomePage({ params }: { params: { id: string } }) {
 
   return (
     <div className="flex flex-col gap-6 px-4">
-      <h2 className="pb-2 text-lg text-black">{`Hello, ${candidate?.first_name} ${candidate?.last_name} 👋`}</h2>
       <div>
         <h3 className="pb-2 text-lg text-black">Job posts</h3>
         <CardGrid>
@@ -75,7 +76,7 @@ export default async function HomePage({ params }: { params: { id: string } }) {
         </CardGrid>
       </div>
 
-      <div >
+      <div>
         <h3 className="pb-2 text-lg text-black">Your applications</h3>
         {candidate?.applications && candidate.applications.length > 0 ? (
           <CardGrid>
@@ -99,9 +100,10 @@ export default async function HomePage({ params }: { params: { id: string } }) {
                   ]}
                   footer={() => (
                     <div className="flex items-center space-x-2">
-                      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500">
-                        <span className="text-xs font-semibold text-white">{`${candidate.first_name[0]}${candidate.last_name[0]}`}</span>
-                      </div>
+                      <Badge
+                        initials={`${candidate.first_name[0]}${candidate.last_name[0]}`}
+                      />
+
                       <div className="flex flex-col">
                         <span className="text-xs text-gray-500">Applicant</span>
                         <span className="text-sm">{`${candidate.first_name} ${candidate.first_name}`}</span>
@@ -113,7 +115,9 @@ export default async function HomePage({ params }: { params: { id: string } }) {
             )}
           </CardGrid>
         ) : (
-          <div className="h-52 w-full rounded bg-slate-100 flex flex-col justify-center items-center"><p className="text-gray-800">No applications yet, apply above!</p></div>
+          <div className="flex h-52 w-full flex-col items-center justify-center rounded bg-slate-100">
+            <p className="text-gray-800">No applications yet, apply above!</p>
+          </div>
         )}
       </div>
       <LineBreak />
@@ -149,9 +153,9 @@ export default async function HomePage({ params }: { params: { id: string } }) {
                   footer={() =>
                     candidate_first_name && candidate_last_name ? (
                       <div className="flex items-center space-x-2">
-                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500">
-                          <span className="text-xs font-semibold text-white">{`${candidate_first_name[0]}${candidate_last_name[0]}`}</span>
-                        </div>
+                        <Badge
+                          initials={`${candidate_first_name[0]}${candidate_last_name[0]}`}
+                        />
                         <div className="flex flex-col">
                           <span className="text-xs text-gray-500">
                             Applicant
