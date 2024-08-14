@@ -6,7 +6,6 @@ import { type CandidateSchema } from "@/lib/definitions";
 import { type z } from "zod";
 import LineBreak from "@/components/linebreak";
 import Badge from "@/components/badge";
-import { Suspense } from "react";
 
 const generateSetUserHasAlreadyAppliedTo = (
   candidate: z.infer<typeof CandidateSchema> | undefined,
