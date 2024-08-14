@@ -3,29 +3,33 @@ import React from "react";
 import { Button as HeadlessButton } from "@headlessui/react";
 import clsx from "clsx";
 
-interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+interface ButtonProps<T extends React.ElementType = "button"> {
+  as?: T;
   variant?: "filled" | "outlined";
-  color?: "blue" | "green" | "red" | "gray";
+  color?: "indigo" | "green" | "red" | "gray";
+  children: React.ReactNode;
+  className?: string;
 }
 
-const Button: React.FC<ButtonProps> = ({
-  children,
+const Button = <T extends React.ElementType = "button">({
+  as,
   variant = "filled",
-  color = "blue",
+  color = "indigo",
   className,
   ...props
-}) => {
+}: ButtonProps<T> &
+  Omit<React.ComponentPropsWithoutRef<T>, keyof ButtonProps<T>>) => {
   const colorStyles = {
-    blue: {
+    indigo: {
       filled: {
-        base: "bg-blue-600 text-white",
-        hover: "hover:bg-blue-500",
-        active: "active:bg-blue-700",
+        base: "bg-indigo-600 text-white",
+        hover: "hover:bg-indigo-500",
+        active: "active:bg-indigo-700",
       },
       outlined: {
-        base: "border border-blue-600 text-blue-600",
-        hover: "hover:bg-blue-50",
-        active: "active:bg-blue-100",
+        base: "border border-indigo-600 text-indigo-600",
+        hover: "hover:bg-indigo-50",
+        active: "active:bg-indigo-100",
       },
     },
     green: {
@@ -66,23 +70,22 @@ const Button: React.FC<ButtonProps> = ({
     },
   };
 
+  const Component = as ?? "button";
+
   return (
-    <HeadlessButton as="button" className={className} {...props}>
-      {({ active }) => (
-        <span
-          className={clsx(
-            "inline-flex items-center rounded px-4 py-2 text-sm font-medium transition-colors duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2",
-            colorStyles[color][variant].base,
-            !active && colorStyles[color][variant].hover,
-            active && colorStyles[color][variant].active,
-            variant === "outlined" && "bg-transparent",
-            `focus:ring-${color}-500`,
-          )}
-        >
-          {children}
-        </span>
+    <Component
+      className={clsx(
+        "w-fit items-center justify-center rounded px-4 py-2 text-sm font-medium transition-colors duration-150 ease-in-out",
+        "focus:outline-none focus:ring-2 focus:ring-offset-2",
+        colorStyles[color][variant].base,
+        colorStyles[color][variant].hover,
+        colorStyles[color][variant].active,
+        variant === "outlined" && "bg-transparent",
+        `focus:ring-${color}-500`,
+        className,
       )}
-    </HeadlessButton>
+      {...props}
+    />
   );
 };
 
