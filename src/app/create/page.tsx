@@ -6,7 +6,6 @@ import GradientWrapper from "@/components/gradient-wrapper";
 import { Field, Input, Label } from "@headlessui/react";
 import clsx from "clsx";
 import Link from "next/link";
-import { useActionState } from "react";
 import { useFormState, useFormStatus } from "react-dom";
 
 function SubmitButton() {

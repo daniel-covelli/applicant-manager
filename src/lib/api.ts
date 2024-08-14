@@ -4,17 +4,16 @@ import { env } from "@/env";
 import { compareDesc, parseISO } from "date-fns";
 import { type z } from "zod";
 import {
-  ApplicationsSchema,
-  CandidatesSchema,
   isApplications,
   isCandidate,
   isCandidates,
+  isJobs,
   type SignupFormSchema,
 } from "./definitions";
 
 const BASE_URL = "https://harvest.greenhouse.io/v1";
 const AUTH_TOKEN = env.GREEN_HOUSE_API_KEY;
-const USER_ID = env.USER_ID;
+const ADMIN_USER_ID = env.ADMIN_USER_ID;
 
 const headers = {
   Authorization: `Basic ${btoa(AUTH_TOKEN + ":")}`,
@@ -27,6 +26,7 @@ async function fetchWrapper(
 ): Promise<unknown> {
   try {
     const response = await fetch(`${BASE_URL}${route}`, {
+      // cache: "no-store",
       ...options,
       headers: { ...headers, ...options.headers },
     });
@@ -107,7 +107,7 @@ export const createProspect = async ({
 }: z.infer<typeof SignupFormSchema>) => {
   const prospect = await fetchWrapper("/prospects", {
     method: "POST",
-    headers: { "On-Behalf-Of": USER_ID },
+    headers: { "On-Behalf-Of": ADMIN_USER_ID },
     body: JSON.stringify({
       first_name,
       last_name,
@@ -115,9 +115,42 @@ export const createProspect = async ({
     }),
   });
 
-  if (isCandidate(prospect)) {
-    console.log("prospect", JSON.stringify(prospect, null, 2));
+  if (isCandidate(prospect)) return prospect;
+};
 
-    return prospect;
-  }
+export const getJobs = async () => {
+  const jobs = await fetchWrapper("/job_posts", { next: { revalidate: 300 } }); // revalidate every 5 minutes
+  if (isJobs(jobs)) return jobs;
+};
+
+export const getCandidate = async (id: string) => {
+  const candidate = await fetchWrapper(`/candidates/${id}`);
+  if (isCandidate(candidate))
+    return {
+      ...candidate,
+      applications: candidate.applications?.filter(
+        ({ prospect }) => prospect === false,
+      ),
+    };
+};
+
+export const createApplication = async ({
+  candidateId,
+  jobId,
+}: {
+  candidateId: string;
+  jobId: number;
+}) => {
+  const application = await fetchWrapper(
+    `/candidates/${candidateId}/applications`,
+    {
+      method: "POST",
+      headers: { "On-Behalf-Of": ADMIN_USER_ID },
+      body: JSON.stringify({
+        job_id: jobId,
+      }),
+    },
+  );
+
+  return application;
 };

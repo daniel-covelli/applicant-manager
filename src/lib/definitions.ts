@@ -26,24 +26,45 @@ export type FormState =
 export const ApplicationSchema = z.object({
   id: z.number(),
   applied_at: z.string(),
-  jobs: z.array(
-    z.object({
+  jobs: z
+    .array(
+      z.object({
+        id: z.number(),
+        name: z.string(),
+      }),
+    )
+    .nullable(),
+  current_stage: z
+    .object({
       id: z.number(),
       name: z.string(),
-    }),
-  ),
-  current_stage: z.object({
-    id: z.number(),
-    name: z.string(),
-  }),
+    })
+    .nullable(),
+  prospect: z.boolean(),
   candidate_id: z.number(),
 });
 
+const JobPostSchema = z.object({
+  id: z.number(),
+  title: z.string(),
+  location: z.object({
+    id: z.number(),
+    name: z.string(),
+  }),
+  first_published_at: z.string().nullable(),
+  live: z.boolean(),
+  job_id: z.number(),
+});
+
+export const JobPostsSchema = z.array(JobPostSchema);
+
 export const ApplicationsSchema = z.array(ApplicationSchema);
+
 export const CandidateSchema = z.object({
   id: z.number(),
   first_name: z.string(),
   last_name: z.string(),
+  applications: z.array(ApplicationSchema),
 });
 export const CandidatesSchema = z.array(CandidateSchema);
 
@@ -63,4 +84,10 @@ export function isCandidates(
   value: unknown,
 ): value is z.infer<typeof CandidatesSchema> {
   return CandidatesSchema.safeParse(value).success;
+}
+
+export function isJobs(
+  value: unknown,
+): value is z.infer<typeof JobPostsSchema> {
+  return JobPostsSchema.safeParse(value).success;
 }

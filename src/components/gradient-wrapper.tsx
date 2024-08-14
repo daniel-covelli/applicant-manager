@@ -19,7 +19,6 @@ const GradientWrapper = ({
           <div className="my-2 border-b border-t border-gray-200">
             {children}
           </div>
-
           <div className="flex justify-center px-6">
             <Footer />
           </div>

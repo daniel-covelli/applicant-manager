@@ -1,8 +1,9 @@
 "use server";
 
-import { createProspect } from "./lib/api";
+import { createApplication, createProspect } from "./lib/api";
 import { redirect } from "next/navigation";
 import { type FormState, SignupFormSchema } from "./lib/definitions";
+import { revalidatePath } from "next/cache";
 
 export async function createAccount(state: FormState, formData: FormData) {
   const validatedFields = SignupFormSchema.safeParse({
@@ -21,4 +22,12 @@ export async function createAccount(state: FormState, formData: FormData) {
   if (prospect) {
     redirect(`/${prospect.id}`);
   }
+}
+
+export async function submitApplication(args: {
+  candidateId: string;
+  jobId: number;
+}) {
+  await createApplication(args);
+  revalidatePath(`/${args.candidateId}`);
 }

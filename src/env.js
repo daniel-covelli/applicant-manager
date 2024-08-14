@@ -9,7 +9,7 @@ export const env = createEnv({
   server: {
     NODE_ENV: z.enum(["development", "test", "production"]),
     GREEN_HOUSE_API_KEY: z.string(),
-    USER_ID: z.string(),
+    ADMIN_USER_ID: z.string(),
   },
 
   /**
@@ -28,7 +28,7 @@ export const env = createEnv({
   runtimeEnv: {
     NODE_ENV: process.env.NODE_ENV,
     GREEN_HOUSE_API_KEY: process.env.GREEN_HOUSE_API_KEY,
-    USER_ID: process.env.USER_ID,
+    ADMIN_USER_ID: process.env.ADMIN_USER_ID,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially
