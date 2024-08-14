@@ -17,7 +17,7 @@ export default async function HomePage() {
         </Button>
       )}
     >
-      <div className="scrollbar-custom flex max-h-80 flex-col gap-2 overflow-y-scroll px-6">
+      <div className="scrollbar-custom flex max-h-80 flex-col gap-2 overflow-y-scroll px-6 py-2">
         {candidates ? (
           candidates.map(({ id, first_name, last_name }) => (
             <Link

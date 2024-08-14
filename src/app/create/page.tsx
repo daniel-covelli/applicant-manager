@@ -20,7 +20,7 @@ function SubmitButton() {
       >
         <svg
           aria-hidden="true"
-          className="h-4 w-4 animate-spin bg-slate-600 fill-white text-gray-200 dark:text-gray-400"
+          className="h-4 w-4 animate-spin fill-white text-gray-200 dark:text-gray-400"
           viewBox="0 0 100 101"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
