@@ -42,9 +42,9 @@ async function fetchWrapper(
           console.error("Error reading response body:", err);
         });
 
-      throw new Error(
-        `HTTP error! status: ${response.status}, statusText: ${response.statusText}`,
-      );
+      // throw new Error(
+      //   `HTTP error! status: ${response.status}, statusText: ${response.statusText}`,
+      // );
     }
 
     return (await response.json()) as unknown;
