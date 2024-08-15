@@ -35,19 +35,18 @@ async function fetchWrapper(
       console.error("Response status:", response.status);
       console.error("Response status text:", response.statusText);
 
-      // response
-      //   .text()
-      //   .then((text) => {
-      //     console.error("Response body:", text);
-      //   })
-      //   .catch((err) => {
-      //     console.error("Error reading response body:", err);
-      //   });
+      response
+        .text()
+        .then((text) => {
+          console.error("Response body:", text);
+        })
+        .catch((err) => {
+          console.error("Error reading response body:", err);
+        });
 
-      // throw new Error(
-      //   `HTTP error! status: ${response.status}, statusText: ${response.statusText}`,
-      // );
-      return undefined;
+      throw new Error(
+        `HTTP error! status: ${response.status}, statusText: ${response.statusText}`,
+      );
     }
 
     return (await response.json()) as unknown;
