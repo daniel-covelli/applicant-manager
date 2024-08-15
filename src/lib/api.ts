@@ -29,10 +29,25 @@ async function fetchWrapper(
       ...options,
       headers: { ...headers, ...options.headers },
     });
+    if (!response.ok) {
+      console.error("Response status:", response.status);
+      console.error("Response status text:", response.statusText);
 
-    if (response.ok) {
-      return (await response.json()) as unknown;
+      response
+        .text()
+        .then((text) => {
+          console.error("Response body:", text);
+        })
+        .catch((err) => {
+          console.error("Error reading response body:", err);
+        });
+
+      throw new Error(
+        `HTTP error! status: ${response.status}, statusText: ${response.statusText}`,
+      );
     }
+
+    return (await response.json()) as unknown;
   } catch (error) {
     console.error(`Error fetching from ${BASE_URL}${route}:`, error);
     throw error;
