@@ -29,7 +29,6 @@ async function fetchWrapper(
       ...options,
       headers: { ...headers, ...options.headers },
     });
-    console.log("", JSON.stringify({ ADMIN_USER_ID, AUTH_TOKEN }, null, 2));
 
     if (!response.ok) {
       console.error("Response status:", response.status);
