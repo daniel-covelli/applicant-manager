@@ -26,7 +26,6 @@ async function fetchWrapper(
 ): Promise<unknown> {
   try {
     const response = await fetch(`${BASE_URL}${route}`, {
-      // cache: "no-store",
       ...options,
       headers: { ...headers, ...options.headers },
     });
@@ -100,6 +99,8 @@ export const createProspect = async ({
       email_addresses: [{ value: email, type: "personal" }],
     }),
   });
+
+  console.log("prospect", JSON.stringify(prospect, null, 2));
 
   if (isCandidate(prospect)) return prospect;
 };
