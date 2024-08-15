@@ -45,6 +45,7 @@ async function fetchWrapper(
       // throw new Error(
       //   `HTTP error! status: ${response.status}, statusText: ${response.statusText}`,
       // );
+      return undefined;
     }
 
     return (await response.json()) as unknown;
