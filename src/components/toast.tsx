@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useCallback, useEffect, useState } from "react";
+import React, { Suspense, useCallback, useEffect, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
-const Toast = () => {
+const Content = () => {
   const router = useRouter();
   const search = useSearchParams();
   const pathName = usePathname();
@@ -66,5 +66,11 @@ const Toast = () => {
     </div>
   );
 };
-
+const Toast = () => {
+  return (
+    <Suspense>
+      <Content />
+    </Suspense>
+  );
+};
 export default Toast;
