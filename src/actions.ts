@@ -1,15 +1,17 @@
 "use server";
 
-import { createApplication, createProspect } from "./lib/api";
-import { redirect } from "next/navigation";
-import { type FormState, SignupFormSchema } from "./lib/definitions";
+import { createCandidate } from "./lib/api";
+import { redirect, RedirectType } from "next/navigation";
+import { CreateCandidateFormSchema, type FormState } from "./lib/definitions";
 import { revalidatePath } from "next/cache";
 
-export async function createAccount(state: FormState, formData: FormData) {
-  const validatedFields = SignupFormSchema.safeParse({
+export async function submitApplication(_: FormState, formData: FormData) {
+  const validatedFields = CreateCandidateFormSchema.safeParse({
     first_name: formData.get("first_name"),
     last_name: formData.get("last_name"),
     email: formData.get("email"),
+    job_id: formData.get("job_id"),
+    job_post_id: formData.get("job_post_id"),
   });
 
   if (!validatedFields.success) {
@@ -17,17 +19,12 @@ export async function createAccount(state: FormState, formData: FormData) {
       errors: validatedFields.error.flatten().fieldErrors,
     };
   }
-  const prospect = await createProspect(validatedFields.data);
+
+  const prospect = await createCandidate(validatedFields.data);
 
   if (prospect) {
-    redirect(`/${prospect.id}`);
+    redirect(`/?status=success`);
+  } else {
+    redirect(`/apply/${validatedFields.data.job_post_id}?status=failure`);
   }
-}
-
-export async function submitApplication(args: {
-  candidateId: string;
-  jobId: number;
-}) {
-  await createApplication(args);
-  revalidatePath(`/${args.candidateId}`);
 }

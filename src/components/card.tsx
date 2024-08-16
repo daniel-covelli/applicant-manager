@@ -10,7 +10,7 @@ const Card = ({
   data: { label: string; value: string }[];
 }) => {
   return (
-    <div className="flex w-full flex-col gap-2 rounded border border-gray-200 p-4">
+    <div className="flex w-full flex-col gap-2 rounded border border-gray-200 bg-white p-4">
       {title && <p className="font-semibold">{title}</p>}
       <div className="flex flex-row gap-6">
         {data.map(({ label, value }) => (

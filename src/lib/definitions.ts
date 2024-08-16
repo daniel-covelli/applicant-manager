@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const SignupFormSchema = z.object({
+export const CreateCandidateFormSchema = z.object({
   first_name: z
     .string()
     .min(2, { message: "Name must be at least 2 characters long." })
@@ -10,6 +10,8 @@ export const SignupFormSchema = z.object({
     .min(2, { message: "Name must be at least 2 characters long." })
     .trim(),
   email: z.string().email({ message: "Please enter a valid email." }).trim(),
+  job_id: z.string(),
+  job_post_id: z.string(),
 });
 
 export type FormState =
@@ -18,6 +20,7 @@ export type FormState =
         first_name?: string[];
         last_name?: string[];
         email?: string[];
+        job_id?: string[];
       };
       message?: string;
     }
@@ -42,6 +45,7 @@ export const ApplicationSchema = z.object({
     .nullable(),
   prospect: z.boolean(),
   candidate_id: z.number(),
+  job_post_id: z.number().nullable(),
 });
 
 const JobPostSchema = z.object({
@@ -54,6 +58,7 @@ const JobPostSchema = z.object({
   first_published_at: z.string().nullable(),
   live: z.boolean(),
   job_id: z.number(),
+  content: z.string(),
 });
 
 export const JobPostsSchema = z.array(JobPostSchema);
@@ -90,4 +95,10 @@ export function isJobs(
   value: unknown,
 ): value is z.infer<typeof JobPostsSchema> {
   return JobPostsSchema.safeParse(value).success;
+}
+
+export function isJobPost(
+  value: unknown,
+): value is z.infer<typeof JobPostSchema> {
+  return JobPostSchema.safeParse(value).success;
 }

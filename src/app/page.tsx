@@ -1,35 +1,47 @@
+import Card, { CardGrid } from "@/components/card";
+import { getJobs } from "@/lib/api";
+import { formatDistanceToNow } from "date-fns";
 import Button from "@/components/button";
-import GradientWrapper from "@/components/gradient-wrapper";
-import { getCandidates } from "@/lib/api";
-
 import Link from "next/link";
+import Toast from "@/components/toast";
 
 export default async function HomePage() {
-  const candidates = await getCandidates();
+  const jobs = await getJobs();
 
   return (
-    <GradientWrapper
-      title={"Welcome"}
-      sub="Select your profile or create a new account"
-      footer={() => (
-        <Button as={Link} href={"/create"}>
-          Create an account
-        </Button>
-      )}
-    >
-      <div className="scrollbar-custom flex max-h-80 flex-col gap-2 overflow-y-scroll px-6 py-2">
-        {candidates ? (
-          candidates.map(({ id, first_name, last_name }) => (
-            <Link
-              key={id}
-              href={`/${id}`}
-              className="rounded-lg border border-gray-200 bg-white p-2 hover:bg-slate-50"
-            >{`${first_name} ${last_name}`}</Link>
-          ))
-        ) : (
-          <p>No candidates yet 🤷‍♂️</p>
-        )}
+    <>
+      <Toast />
+      <div className="flex flex-col gap-6 px-4">
+        <div>
+          <h3 className="pb-2 text-lg text-black">Job posts</h3>
+          <CardGrid>
+            {jobs?.map(({ id, title, location, first_published_at }) => (
+              <Card
+                key={id}
+                title={title}
+                data={[
+                  { label: "Location", value: location.name },
+                  ...(first_published_at
+                    ? [
+                        {
+                          label: "Published",
+                          value: formatDistanceToNow(first_published_at, {
+                            addSuffix: true,
+                          }),
+                        },
+                      ]
+                    : []),
+                ]}
+                footer={() => (
+                  <Button as={Link} href={`/apply/${id}`}>
+                    Apply
+                  </Button>
+                )}
+              />
+            ))}
+          </CardGrid>
+        </div>
       </div>
-    </GradientWrapper>
+    </>
   );
 }

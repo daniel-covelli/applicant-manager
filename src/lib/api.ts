@@ -4,11 +4,12 @@ import { env } from "@/env";
 import { compareDesc, parseISO } from "date-fns";
 import { type z } from "zod";
 import {
+  type CreateCandidateFormSchema,
   isApplications,
   isCandidate,
   isCandidates,
+  isJobPost,
   isJobs,
-  type SignupFormSchema,
 } from "./definitions";
 
 const BASE_URL = "https://harvest.greenhouse.io/v1";
@@ -101,24 +102,32 @@ export const getCandidates = async () => {
   }
 };
 
-export const createProspect = async ({
+export const createCandidate = async ({
   first_name,
   last_name,
   email,
-}: z.infer<typeof SignupFormSchema>) => {
-  const prospect = await fetchWrapper("/prospects", {
-    method: "POST",
-    headers: { "On-Behalf-Of": ADMIN_USER_ID },
-    body: JSON.stringify({
-      first_name,
-      last_name,
-      email_addresses: [{ value: email, type: "personal" }],
-    }),
-  });
+  job_id,
+}: z.infer<typeof CreateCandidateFormSchema>) => {
+  try {
+    const candidate = await fetchWrapper("/candidates", {
+      method: "POST",
+      headers: { "On-Behalf-Of": ADMIN_USER_ID },
+      body: JSON.stringify({
+        first_name,
+        last_name,
+        email_addresses: [{ value: email, type: "personal" }],
+        applications: [
+          {
+            job_id,
+          },
+        ],
+      }),
+    });
 
-  console.log("prospect", JSON.stringify(prospect, null, 2));
-
-  if (isCandidate(prospect)) return prospect;
+    if (isCandidate(candidate)) return candidate;
+  } catch {
+    return undefined;
+  }
 };
 
 export const getJobs = async () => {
@@ -150,10 +159,35 @@ export const createApplication = async ({
       method: "POST",
       headers: { "On-Behalf-Of": ADMIN_USER_ID },
       body: JSON.stringify({
-        job_id: jobId,
+        job_ids: [jobId],
       }),
     },
   );
 
   return application;
+};
+
+export const getJobPost = async (id: string) => {
+  console.log("post_id", id);
+
+  const jobPost = await fetchWrapper(`/job_posts/${id}`);
+  if (isJobPost(jobPost)) {
+    const candidates = await fetchWrapper(`/candidates`);
+    if (isCandidates(candidates)) {
+      return {
+        ...jobPost,
+        otherCandidates: candidates.flatMap((candidate) =>
+          candidate.applications
+            .filter((application) =>
+              application.jobs?.some((job) => job.id === jobPost.job_id),
+            )
+            .map(() => ({
+              id: candidate.id,
+              first: candidate.first_name,
+              last: candidate.last_name,
+            })),
+        ),
+      };
+    }
+  }
 };
