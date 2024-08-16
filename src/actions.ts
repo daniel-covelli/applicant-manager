@@ -1,9 +1,8 @@
 "use server";
 
 import { createCandidate } from "./lib/api";
-import { redirect, RedirectType } from "next/navigation";
+import { redirect } from "next/navigation";
 import { CreateCandidateFormSchema, type FormState } from "./lib/definitions";
-import { revalidatePath } from "next/cache";
 
 export async function submitApplication(_: FormState, formData: FormData) {
   const validatedFields = CreateCandidateFormSchema.safeParse({
